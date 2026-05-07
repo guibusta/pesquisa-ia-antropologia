@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pesquisa: IA na Antropologia · FESPSP 2025</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --bg:#fafaf8;--bg2:#f4f3ef;--bg3:#edecea;
+  --tx:#1a1a18;--tx2:#5a5955;--tx3:#9a9894;
+  --bdr:#e0dfd9;--bdr2:#cccac3;
+  --warn:#92611a;--warn-bg:#fdf6e8;--warn-bdr:#e8c97a;
+  --ok:#2d6a4f;--ok-bg:#edf7f1;
+  --serif:Georgia,'Times New Roman',serif;
+  --sans:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+  --r:8px;--rl:12px;
+}
+@media(prefers-color-scheme:dark){
+  :root{
+    --bg:#18181a;--bg2:#222224;--bg3:#2a2a2c;
+    --tx:#f0efe8;--tx2:#a8a7a0;--tx3:#68675f;
+    --bdr:#3a3a3c;--bdr2:#4a4a4c;
+    --warn:#e8b86a;--warn-bg:#2a2218;--warn-bdr:#5a4220;
+    --ok:#5cb88a;--ok-bg:#162a1e;
+  }
+}
+body{font-family:var(--sans);background:var(--bg);color:var(--tx);min-height:100vh;font-size:16px;line-height:1.6;}
+.scr{display:none;min-height:100vh;}
+.scr.act{display:flex;flex-direction:column;}
+.wrap{max-width:500px;margin:0 auto;padding:48px 24px;width:100%;flex:1;display:flex;flex-direction:column;justify-content:center;}
+h1{font-family:var(--serif);font-weight:400;font-size:clamp(24px,5vw,32px);line-height:1.3;margin-bottom:14px;}
+h2{font-family:var(--serif);font-weight:400;font-size:20px;margin-bottom:6px;}
+p{color:var(--tx2);line-height:1.8;}
+label{display:block;font-size:11px;text-transform:uppercase;letter-spacing:.09em;font-weight:600;color:var(--tx2);margin-bottom:6px;}
+input,select,textarea{width:100%;padding:10px 13px;border:1px solid var(--bdr);border-radius:var(--r);font-size:14px;font-family:var(--sans);background:var(--bg);color:var(--tx);outline:none;transition:border .15s;}
+input:focus,select:focus,textarea:focus{border-color:var(--bdr2);}
+textarea{resize:none;}
+button{cursor:pointer;border:1px solid var(--bdr2);background:var(--bg);color:var(--tx);border-radius:var(--r);padding:11px 20px;font-size:14px;font-family:var(--sans);transition:background .12s,border .12s;}
+button:hover{background:var(--bg2);}
+button:disabled{opacity:.4;cursor:not-allowed;}
+button.prim{background:var(--tx);color:var(--bg);border-color:var(--tx);}
+button.prim:hover{opacity:.88;}
+button.prim:disabled{opacity:.35;}
+.bnr{background:var(--warn-bg);border-left:3px solid var(--warn-bdr);border-radius:0 var(--r) var(--r) var(--r);padding:13px 16px;font-size:13px;line-height:1.75;color:var(--tx2);}
+.bnr strong{color:var(--tx);}
+.bnr-ok{background:var(--ok-bg);border-left-color:var(--ok);}
+.tag{display:inline-block;font-size:11px;padding:3px 10px;border:1px solid var(--warn-bdr);border-radius:99px;color:var(--warn);letter-spacing:.06em;text-transform:uppercase;font-weight:600;margin-bottom:20px;}
+.sep{height:1px;background:var(--bdr);margin:20px 0;}
+.mg-b{margin-bottom:14px;}
+
+/* interview */
+#iv-wrap{max-width:560px;margin:0 auto;width:100%;flex:1;display:flex;flex-direction:column;height:100vh;}
+#iv-head{padding:12px 20px;border-bottom:1px solid var(--bdr);background:var(--bg2);flex-shrink:0;display:flex;justify-content:space-between;align-items:center;}
+#iv-head-name{font-size:13px;font-style:italic;font-family:var(--serif);color:var(--tx2);}
+#iv-cnt{font-size:11px;color:var(--tx3);text-transform:uppercase;letter-spacing:.07em;}
+#iv-msgs{flex:1;overflow-y:auto;padding:20px 20px;display:flex;flex-direction:column;gap:16px;}
+.msg-row{display:flex;gap:10px;align-items:flex-start;}
+.msg-row.user{flex-direction:row-reverse;}
+.av{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;flex-shrink:0;font-weight:600;}
+.av-ai{background:var(--warn-bg);color:var(--warn);border:1px solid var(--warn-bdr);}
+.av-u{background:var(--bg3);color:var(--tx2);border:1px solid var(--bdr);}
+.bub-ai{background:var(--bg2);border-left:3px solid var(--warn-bdr);border-radius:0 var(--r) var(--r) var(--r);padding:12px 15px;font-family:var(--serif);font-size:15px;line-height:1.78;max-width:86%;color:var(--tx);}
+.bub-u{background:var(--bg);border:1px solid var(--bdr);border-radius:var(--r) 0 var(--r) var(--r);padding:12px 15px;font-size:14px;line-height:1.65;max-width:86%;color:var(--tx);}
+.lbl-msg{font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:var(--tx3);margin-bottom:4px;}
+#iv-inp{flex-shrink:0;padding:12px 16px;border-top:1px solid var(--bdr);background:var(--bg2);}
+#iv-inp-row{display:flex;gap:8px;align-items:flex-end;}
+#ui{flex:1;min-height:40px;max-height:110px;overflow-y:auto;resize:none;font-size:14px;line-height:1.5;background:var(--bg);}
+#snd{width:40px;height:40px;flex-shrink:0;display:flex;align-items:center;justify-content:center;padding:0;border-radius:var(--r);}
+#snd svg{width:18px;height:18px;}
+#iv-foot{display:flex;justify-content:space-between;align-items:center;margin-top:8px;}
+#iv-foot span{font-size:11px;color:var(--tx3);}
+#end-btn{font-size:11px;padding:4px 10px;border-radius:var(--r);}
+.dots span{width:6px;height:6px;border-radius:50%;background:var(--tx3);display:inline-block;animation:dot 1.2s ease-in-out infinite;}
+.dots span:nth-child(2){animation-delay:.15s;}.dots span:nth-child(3){animation-delay:.3s;}
+@keyframes dot{0%,60%,100%{transform:translateY(0);opacity:.3;}30%{transform:translateY(-6px);opacity:1;}}
+
+/* admin */
+#a-wrap{max-width:800px;margin:0 auto;padding:32px 20px;width:100%;}
+.stat-g{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:20px;}
+.stat-c{background:var(--bg2);border-radius:var(--r);padding:14px 18px;text-align:center;}
+.stat-n{font-size:26px;font-weight:500;color:var(--warn);}
+.stat-l{font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:var(--tx3);}
+.icard{background:var(--bg);border:1px solid var(--bdr);border-radius:var(--r);margin-bottom:10px;overflow:hidden;}
+.icard-h{padding:14px 16px;cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:12px;}
+.icard-h:hover{background:var(--bg2);}
+.icard-h-info{display:flex;flex-direction:column;gap:2px;}
+.icard-name{font-size:14px;font-weight:500;}
+.icard-meta{font-size:12px;color:var(--tx2);}
+.icard-chips{display:flex;align-items:center;gap:8px;flex-shrink:0;}
+.chip{font-size:11px;padding:2px 9px;border-radius:99px;border:1px solid var(--bdr);color:var(--tx2);}
+.chip-ok{border-color:var(--ok);color:var(--ok);}
+.icard-body{display:none;border-top:1px solid var(--bdr);padding:14px 16px;}
+.icard-body.open{display:block;}
+.msg-t{font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:var(--tx3);margin-bottom:4px;margin-top:12px;}
+.msg-t:first-child{margin-top:0;}
+.msg-txt{background:var(--bg2);border-left:2px solid var(--bdr2);border-radius:0 6px 6px 6px;padding:9px 12px;font-size:13px;line-height:1.7;color:var(--tx);}
+.msg-txt.ai{border-left-color:var(--warn-bdr);}
+footer-tap{display:block;font-size:10px;text-align:center;padding:16px;color:transparent;user-select:none;cursor:default;}
+</style>
+</head>
+<body>
+
+<!-- ===== BOAS-VINDAS ===== -->
+<div id="sw" class="scr act">
+<div class="wrap">
+  <span class="tag">Pesquisa · TCC · FESPSP 2025</span>
+  <h1>O que você <em style="color:var(--warn)">sente</em> quando usa IA no seu trabalho?</h1>
+  <p style="margin-bottom:20px;">Pesquisa sobre experiências afetivas com inteligência artificial na prática antropológica. Parte de um TCC de pós-graduação em Antropologia Cultural pela FESPSP, São Paulo.</p>
+  <div class="bnr bnr-ok" style="margin-bottom:24px;">
+    <strong>Antes de participar:</strong> A entrevista é conduzida por uma IA e dura ~10–15 minutos. Suas respostas serão registradas anonimamente para fins acadêmicos. Não há respostas certas — nos interessa o que você <em>sente</em>, não o que você analisa.
+  </div>
+  <button class="prim" onclick="go('sp')" style="width:100%;font-size:15px;padding:13px;">Quero participar →</button>
+  <p style="margin-top:16px;font-size:12px;color:var(--tx3);text-align:center;">Esta pesquisa usa IA como instrumento metodológico.</p>
+  <div id="ftap" onclick="adminTap()" style="margin-top:32px;font-size:10px;color:transparent;text-align:center;cursor:default;user-select:none;padding:8px;">FESPSP · 2025</div>
+</div>
+</div>
+
+<!-- ===== PERFIL ===== -->
+<div id="sp" class="scr">
+<div class="wrap">
+  <button onclick="go('sw')" style="background:none;border:none;font-size:13px;color:var(--tx2);cursor:pointer;padding:0;margin-bottom:24px;text-align:left;">← Voltar</button>
+  <h2>Sobre você</h2>
+  <p style="font-size:13px;margin-bottom:22px;">Esses dados contextualizam as respostas na análise da pesquisa.</p>
+  <label>Nome ou pseudônimo *</label>
+  <input id="pn" type="text" placeholder="Pode usar um nome fictício" oninput="chkp()" class="mg-b">
+  <label>Vínculo institucional *</label>
+  <select id="pv" onchange="chkp()" class="mg-b">
+    <option value="">Selecione...</option>
+    <option>Pós-graduando/a em Antropologia</option>
+    <option>Professor/a e pesquisador/a</option>
+    <option>Pesquisador/a sem vínculo docente</option>
+    <option>Profissional que usa IA no trabalho</option>
+    <option>Outro</option>
+  </select>
+  <label>Área ou tema de pesquisa <span style="font-weight:400;opacity:.6;">(opcional)</span></label>
+  <textarea id="pa" placeholder="Ex: etnografia digital, STS, antropologia urbana..." style="height:62px;" class="mg-b"></textarea>
+  <div class="sep"></div>
+  <label style="margin-bottom:10px;">Você consente que suas respostas sejam usadas anonimamente nesta pesquisa acadêmica?</label>
+  <label style="text-transform:none;letter-spacing:0;font-weight:400;font-size:14px;display:flex;align-items:flex-start;gap:10px;margin-bottom:20px;cursor:pointer;">
+    <input id="pc" type="checkbox" onchange="chkp()" style="width:18px;height:18px;margin-top:2px;flex-shrink:0;"> Sim, consinto com a participação
+  </label>
+  <button id="pbtn" class="prim" onclick="startIv()" disabled style="width:100%;font-size:15px;padding:13px;">Iniciar entrevista →</button>
+</div>
+</div>
+
+<!-- ===== ENTREVISTA ===== -->
+<div id="si" class="scr">
+<div id="iv-wrap">
+  <div id="iv-head">
+    <div id="iv-head-name">Sentimentos sobre IA na Antropologia</div>
+    <div id="iv-cnt"></div>
+  </div>
+  <div id="iv-msgs"></div>
+  <div id="iv-inp">
+    <div id="iv-inp-row">
+      <textarea id="ui" placeholder="Escreva sua resposta..." onkeydown="kd(event)" oninput="ar(this)"></textarea>
+      <button id="snd" onclick="sendMsg()" title="Enviar">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+      </button>
+    </div>
+    <div id="iv-foot">
+      <span>Enter envia · Shift+Enter nova linha</span>
+      <button id="end-btn" onclick="endIv()">Encerrar entrevista</button>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ===== FIM ===== -->
+<div id="sd" class="scr">
+<div class="wrap" style="align-items:center;text-align:center;">
+  <div style="width:60px;height:60px;border-radius:50%;background:var(--ok-bg);display:flex;align-items:center;justify-content:center;margin-bottom:20px;border:1px solid var(--ok);">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--ok)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+  </div>
+  <h2 style="margin-bottom:10px;">Obrigado pela participação</h2>
+  <p style="max-width:340px;">Sua entrevista foi registrada e contribuirá com a pesquisa sobre afetos e IA na prática antropológica.</p>
+  <p style="margin-top:20px;font-size:12px;color:var(--tx3);font-style:italic;">TCC em Antropologia Cultural · FESPSP · São Paulo · 2025</p>
+</div>
+</div>
+
+<!-- ===== ADMIN ===== -->
+<div id="sa" class="scr">
+  <div id="a-log" style="max-width:320px;margin:100px auto;text-align:center;padding:0 24px;">
+    <h3 style="font-family:var(--serif);font-weight:400;font-size:18px;margin-bottom:16px;color:var(--tx2);">Acesso da pesquisa</h3>
+    <input id="apass" type="password" placeholder="senha..." style="text-align:center;margin-bottom:10px;" onkeydown="if(event.key==='Enter')achk()">
+    <button class="prim" onclick="achk()" style="width:100%;padding:11px;">Entrar</button>
+    <p id="aerr" style="font-size:12px;color:#c0392b;margin-top:8px;min-height:16px;"></p>
+    <button onclick="go('sw')" style="background:none;border:none;font-size:12px;color:var(--tx3);cursor:pointer;margin-top:8px;">← Início</button>
+  </div>
+  <div id="a-pan" style="display:none;">
+  <div id="a-wrap">
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:20px;">
+      <div>
+        <h2 style="margin-bottom:3px;">Entrevistas coletadas</h2>
+        <p style="font-size:12px;color:var(--tx3);">IA na Antropologia · FESPSP 2025</p>
+      </div>
+      <div style="display:flex;gap:8px;">
+        <button onclick="aload()" style="font-size:12px;padding:8px 12px;">↻ Atualizar</button>
+        <button onclick="expAll()" style="font-size:12px;padding:8px 12px;">↓ Exportar .txt</button>
+        <button onclick="go('sw')" style="font-size:12px;padding:8px 12px;">← Sair</button>
+      </div>
+    </div>
+    <div class="stat-g">
+      <div class="stat-c"><div id="sttot" class="stat-n">—</div><div class="stat-l">Total</div></div>
+      <div class="stat-c"><div id="stcomp" class="stat-n" style="color:var(--ok);">—</div><div class="stat-l">Completas</div></div>
+      <div class="stat-c"><div id="stavg" class="stat-n" style="color:var(--tx2);">—</div><div class="stat-l">Média trocas</div></div>
+    </div>
+    <p style="font-size:13px;color:var(--tx2);margin-bottom:16px;padding:10px 14px;background:var(--bg2);border-radius:var(--r);">
+      As entrevistas também estão salvas no <a id="sheet-link" href="#" target="_blank" style="color:var(--warn);">Google Sheets da pesquisa</a>. Use esta página para visualização rápida.
+    </p>
+    <div id="ilist"></div>
+  </div>
+  </div>
+</div>
+
+<script>
+// ============================================================
+// CONFIGURAÇÃO — preencha após seguir o guia de instalação
+// ============================================================
+const CFG = {
+  WORKER_URL:  'COLE_AQUI_A_URL_DO_SEU_CLOUDFLARE_WORKER',
+  WEBHOOK_URL: 'COLE_AQUI_A_URL_DO_SEU_GOOGLE_APPS_SCRIPT',
+  SHEET_URL:   'COLE_AQUI_O_LINK_DO_SEU_GOOGLE_SHEETS',
+  ADMIN_PASS:  'tcc2025fespsp',
+  MODEL:       'claude-sonnet-4-20250514',
+};
+// ============================================================
+
+const SYS = `Você é um entrevistador empático conduzindo uma pesquisa de TCC em Antropologia Cultural (FESPSP, São Paulo) sobre sentimentos no uso de IA na prática antropológica.
+
+REGRAS FUNDAMENTAIS:
+1. Pergunte SEMPRE sobre sentimentos e experiências vividas, NUNCA sobre opiniões ou análises racionais. Substitua "o que você acha?" por "o que você sente?", "como isso te afeta?", "o que você experimenta?".
+2. Seja caloroso, curioso, não julgador. Valide os sentimentos sem analisá-los.
+3. Faça UMA pergunta por vez. Máximo 3 frases por resposta.
+4. Aprofunde respostas ricas com: "Me conta mais sobre isso...", "Como esse sentimento aparece no seu corpo?", "Essa sensação tem nome para você?"
+5. Cubra estes cinco eixos ao longo da conversa, de forma natural e não mecânica:
+   EIXO 1 — CORPO E DADOS: Como a pessoa sente ao entregar dados de campo (notas, transcrições, gravações de interlocutores) para processamento por IA?
+   EIXO 2 — AUTORIA E VOZ: O que sente ao assinar um texto em que a IA participou da escrita?
+   EIXO 3 — CONFIANÇA E ESTRANHAMENTO: Há conforto ou desconforto quando a IA interpreta dados que foram coletados pelo corpo do pesquisador, em campo?
+   EIXO 4 — IDENTIDADE PROFISSIONAL: O uso de IA faz a pessoa se sentir mais ou menos antropóloga/o?
+   EIXO 5 — CUMPLICIDADE ÉTICA: Como se sente em relação aos seus interlocutores de pesquisa quando usa IA para analisar o que eles disseram ou viveram?
+6. Após 10–14 trocas, encerre com calor: "Você tocou em pontos muito sensíveis e importantes. Muito obrigado/a por compartilhar esses sentimentos comigo — eles vão contribuir muito com esta pesquisa."
+7. Responda SEMPRE em português brasileiro.
+8. Nunca mencione os "eixos" ou a estrutura da pesquisa. A conversa deve parecer natural.`;
+
+const OPEN = `Olá! Seja muito bem-vindo/a. Antes de começarmos, só quero reforçar: não há respostas certas aqui. Me interessa o que você sente de verdade — não o que você analisa ou pensa racionalmente sobre o assunto. Pode falar com total liberdade.
+
+Me conta: quando você pensa em usar inteligência artificial em alguma parte do seu trabalho ou da sua pesquisa, qual é o primeiro sentimento que surge?`;
+
+let hist = [], part = {}, tapCount = 0, tapTimer = null, busy = false;
+
+function go(id) {
+  document.querySelectorAll('.scr').forEach(s => s.classList.remove('act'));
+  document.getElementById(id).classList.add('act');
+  window.scrollTo(0, 0);
+}
+
+function chkp() {
+  const n = document.getElementById('pn').value.trim();
+  const v = document.getElementById('pv').value;
+  const c = document.getElementById('pc').checked;
+  document.getElementById('pbtn').disabled = !(n && v && c);
+}
+
+function adminTap() {
+  tapCount++;
+  clearTimeout(tapTimer);
+  if (tapCount >= 5) { tapCount = 0; go('sa'); }
+  tapTimer = setTimeout(() => { tapCount = 0; }, 1800);
+}
+
+function ar(ta) {
+  ta.style.height = 'auto';
+  ta.style.height = Math.min(ta.scrollHeight, 110) + 'px';
+}
+
+function kd(e) {
+  if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMsg(); }
+}
+
+function startIv() {
+  part = {
+    id: Date.now().toString(),
+    name: document.getElementById('pn').value.trim(),
+    role: document.getElementById('pv').value,
+    area: document.getElementById('pa').value.trim(),
+    ts: new Date().toISOString(),
+    msgs: [],
+    done: false
+  };
+  hist = [];
+  go('si');
+  document.getElementById('iv-msgs').innerHTML = '';
+  document.getElementById('iv-cnt').textContent = '';
+  addBub('ai', OPEN);
+  hist.push({ role: 'assistant', content: OPEN });
+  part.msgs.push({ role: 'ai', text: OPEN });
+}
+
+function addBub(who, txt) {
+  const box = document.getElementById('iv-msgs');
+  const row = document.createElement('div');
+  row.className = 'msg-row' + (who === 'user' ? ' user' : '');
+  const av = document.createElement('div');
+  av.className = 'av av-' + (who === 'ai' ? 'ai' : 'u');
+  av.textContent = who === 'ai' ? 'IA' : 'Eu';
+  const bub = document.createElement('div');
+  bub.className = who === 'ai' ? 'bub-ai' : 'bub-u';
+  bub.innerHTML = txt.replace(/\n/g, '<br>');
+  row.appendChild(av);
+  row.appendChild(bub);
+  box.appendChild(row);
+  box.scrollTop = box.scrollHeight;
+  const n = box.querySelectorAll('.msg-row.user').length;
+  document.getElementById('iv-cnt').textContent = n > 0 ? n + (n === 1 ? ' troca' : ' trocas') : '';
+}
+
+function addTyping() {
+  const box = document.getElementById('iv-msgs');
+  const row = document.createElement('div');
+  row.className = 'msg-row'; row.id = 'typing';
+  row.innerHTML = `<div class="av av-ai">IA</div><div class="bub-ai"><span class="dots"><span></span><span></span><span></span></span></div>`;
+  box.appendChild(row);
+  box.scrollTop = box.scrollHeight;
+}
+
+function rmTyping() { const t = document.getElementById('typing'); if (t) t.remove(); }
+
+async function sendMsg() {
+  if (busy) return;
+  const inp = document.getElementById('ui');
+  const txt = inp.value.trim();
+  if (!txt) return;
+  inp.value = ''; inp.style.height = 'auto';
+  busy = true;
+  document.getElementById('snd').disabled = true;
+  addBub('user', txt);
+  hist.push({ role: 'user', content: txt });
+  part.msgs.push({ role: 'user', text: txt });
+  addTyping();
+  try {
+    const r = await fetch(CFG.WORKER_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ model: CFG.MODEL, max_tokens: 600, system: SYS, messages: hist })
+    });
+    const d = await r.json();
+    rmTyping();
+    const rep = d.content && d.content[0] ? d.content[0].text : 'Desculpe, houve um erro de conexão. Pode tentar novamente?';
+    addBub('ai', rep);
+    hist.push({ role: 'assistant', content: rep });
+    part.msgs.push({ role: 'ai', text: rep });
+    savePartial();
+  } catch (e) {
+    rmTyping();
+    addBub('ai', 'Houve um problema de conexão. Pode tentar novamente em instantes?');
+  }
+  busy = false;
+  document.getElementById('snd').disabled = false;
+  document.getElementById('ui').focus();
+}
+
+async function endIv() {
+  part.done = true;
+  await saveFull();
+  go('sd');
+}
+
+function savePartial() {
+  if (!CFG.WEBHOOK_URL || CFG.WEBHOOK_URL.includes('COLE')) return;
+  const data = { ...part, status: 'parcial' };
+  fetch(CFG.WEBHOOK_URL, { method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) }).catch(() => {});
+}
+
+async function saveFull() {
+  if (!CFG.WEBHOOK_URL || CFG.WEBHOOK_URL.includes('COLE')) return;
+  const data = { ...part, status: 'completa' };
+  try {
+    await fetch(CFG.WEBHOOK_URL, { method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) });
+  } catch (e) {}
+}
+
+// --- ADMIN ---
+function achk() {
+  if (document.getElementById('apass').value === CFG.ADMIN_PASS) {
+    document.getElementById('a-log').style.display = 'none';
+    document.getElementById('a-pan').style.display = 'block';
+    if (CFG.SHEET_URL && !CFG.SHEET_URL.includes('COLE')) {
+      document.getElementById('sheet-link').href = CFG.SHEET_URL;
+    }
+    aload();
+  } else {
+    document.getElementById('aerr').textContent = 'Senha incorreta.';
+  }
+}
+
+async function aload() {
+  document.getElementById('ilist').innerHTML = '<p style="font-size:13px;color:var(--tx3);padding:8px 0;">As entrevistas completas estão no Google Sheets. Use o link acima para acessá-las.</p>';
+  document.getElementById('sttot').textContent = '—';
+  document.getElementById('stcomp').textContent = '—';
+  document.getElementById('stavg').textContent = '—';
+}
+
+function expAll() {
+  alert('Para exportar todas as entrevistas, acesse o Google Sheets da pesquisa e use Arquivo → Fazer download.');
+}
+
+function fmtIv(iv) {
+  let s = `ENTREVISTA — IA na Antropologia · FESPSP 2025\n${'─'.repeat(52)}\nParticipante: ${iv.name || 'Anônimo'}\nVínculo: ${iv.role || '—'}\nÁrea: ${iv.area || '—'}\nData: ${iv.ts || '—'}\nStatus: ${iv.done ? 'Completa' : 'Parcial'}\n${'─'.repeat(52)}\n\n`;
+  (iv.msgs || []).forEach(m => { s += `[${m.role === 'ai' ? 'ENTREVISTADOR' : 'PARTICIPANTE'}]\n${m.text}\n\n`; });
+  return s;
+}
+</script>
+</body>
+</html>
